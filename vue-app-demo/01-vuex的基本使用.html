@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>vux的基本使用</title>
+  <style>
+    span{
+      color:red;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    <button @click="$store.commit('reduce', 20);">vue实例化对象:点击减20</button>
+    <button @click="$store.dispatch('dealNum', 10, 20, 30)">更新数据：将num两秒后重置为：10</button>
+    <h1>state中的数据 <span>{{$store.state.num}}</span></h1>
+    <h2>双倍num的值 <span>{{$store.getters.doubleNum}}</span></h2>
+    <!-- 定义渲染的容器 -->
+    <router-view></router-view> 
+  </div>
+  <template id="home">
+    <div>
+      <button @click="$store.commit('add', 10, 'hello')">home：点击加10</button>
+      <h2>home组件中 <span>{{$store.state.num}}</span></h2>
+      <router-view></router-view> <!-- 第一步 定义子路由渲染的容器 -->
+    </div>
+  </template>
+  <script type="text/javascript" src="https://cdn.staticfile.org/vue/2.6.10/vue.min.js"></script>
+  <script type="text/javascript" src="https://unpkg.com/vue-router@3.0.6/dist/vue-router.js"></script>
+  <script type="text/javascript" src="https://unpkg.com/vuex@3.1.1/dist/vuex.js"></script>
+  <script type="text/javascript">
+    // 定义组件
+    var Home = {
+      template: '#home'
+    };
+
+    // 第一步 定义路由规则
+    var routes = [{
+      path: '/home',
+      name: 'home',
+      component: Home
+    }];
+
+    // 定义store第一步 定义store实例化对象
+    var store = new Vuex.Store({
+      state: { // 定义状态
+        num: 0
+      },
+      getters: { // 定义动态绑定的数据
+        doubleNum: function (state) {
+          return state.num * 2;
+        }
+      },
+      mutations: { // 修改的消息
+        add: function (state, num) { // 增加num值
+          state.num += num;
+        },
+        reduce: function (state, num) { // 减少num值
+          state.num -= num;
+        },
+        resetNum: function (state, num) {
+          state.num = num;
+        }
+      },
+      actions: { // 定义actions
+        dealNum: function (context, num) {
+          setTimeout(function () { // 我们可以异步提交
+            context.commit('resetNum', num)
+          }, 2000)
+        }
+      }
+    });
+
+    // 第二步 实例化路由对象
+    var router = new VueRouter({
+      routes: routes // 定义路由规则
+    });
+
+    // 第三步 注册路由 和 store对象
+    var app = new Vue({
+      el: '#app', // 注册路由
+      router: router,
+      store: store // 使用vuex第二步 注册store
+    })
+  </script>
+</body>
+
+</html>
