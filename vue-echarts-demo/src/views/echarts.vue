@@ -24,7 +24,7 @@
               yAxis: {},
               series: [
                 {
-                  name: "销量",
+                  name: "工单数",
                   type: "bar",
                   data: res.data.seriesData
                 }
